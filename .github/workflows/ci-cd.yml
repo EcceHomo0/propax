@@ -165,14 +165,22 @@ jobs:
       #   - SCALINGO_API_TOKEN  : token API Scalingo (Account → API Tokens)
       #   - SCALINGO_APP_NAME   : nom de l'app Scalingo (ex: propax-backend)
       - name: Déploiement Backend sur Scalingo
+        env:
+          SCALINGO_API_TOKEN: ${{ secrets.SCALINGO_API_TOKEN }}
+          DISABLE_INTERACTIVE: true
         run: |
           # Installer la CLI Scalingo
           curl -O https://cli-dl.scalingo.com/install && bash install
 
-          # Déployer l'image Docker du backend sur Scalingo
-          scalingo --app ${{ secrets.SCALINGO_APP_NAME }} \
-            --token ${{ secrets.SCALINGO_API_TOKEN }} \
-            deploy ${{ steps.image_meta.outputs.backend }}:${{ github.sha }}
+          # Préparer une archive de déploiement ne contenant que le backend
+          rm -rf scalingo-backend-deploy
+          mkdir -p scalingo-backend-deploy/db
+          cp -R server/. scalingo-backend-deploy/
+          cp db/init.sql scalingo-backend-deploy/db/init.sql
+          tar -czf backend-deploy.tar.gz -C scalingo-backend-deploy .
+
+          # Déployer l'archive backend sur Scalingo
+          scalingo --app ${{ secrets.SCALINGO_APP_NAME }} deploy backend-deploy.tar.gz ${{ github.sha }}
 
           echo "Déploiement Scalingo Propax ${{ github.sha }} réussi ✓"
 

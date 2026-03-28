@@ -41,8 +41,26 @@ if (process.env.DATABASE_URL) {
 const pool = mysql.createPool(config);
 
 async function initializeDatabase() {
-  const initSqlPath = path.join(__dirname, "..", "db", "init.sql");
-  const initSql = await fs.readFile(initSqlPath, "utf8");
+  const candidatePaths = [
+    path.join(__dirname, "..", "db", "init.sql"),
+    path.join(__dirname, "db", "init.sql"),
+  ];
+
+  let initSql;
+  for (const candidatePath of candidatePaths) {
+    try {
+      initSql = await fs.readFile(candidatePath, "utf8");
+      break;
+    } catch (error) {
+      if (error.code !== "ENOENT") {
+        throw error;
+      }
+    }
+  }
+
+  if (!initSql) {
+    throw new Error("init.sql introuvable pour l'initialisation de la base");
+  }
 
   await pool.query(initSql);
 }
