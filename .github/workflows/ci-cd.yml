@@ -25,8 +25,6 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_FRONTEND: ghcr.io/${{ github.repository_owner }}/propax-frontend
-  IMAGE_BACKEND: ghcr.io/${{ github.repository_owner }}/propax-backend
 
 jobs:
   # ══════════════════════════════════════════════════════════
@@ -41,6 +39,13 @@ jobs:
       # ── 1. Récupération du code source ──────────────────
       - name: Checkout du code
         uses: actions/checkout@v4
+
+      - name: Préparer les noms d'images GHCR
+        id: image_meta
+        run: |
+          owner=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+          echo "frontend=${{ env.REGISTRY }}/${owner}/propax-frontend" >> "$GITHUB_OUTPUT"
+          echo "backend=${{ env.REGISTRY }}/${owner}/propax-backend" >> "$GITHUB_OUTPUT"
 
       # ── 2. Installation de Node.js ───────────────────────
       - name: Setup Node.js 20
@@ -83,16 +88,16 @@ jobs:
       - name: Build Docker image frontend
         run: |
           docker build \
-            --tag ${{ env.IMAGE_FRONTEND }}:${{ github.sha }} \
-            --tag ${{ env.IMAGE_FRONTEND }}:latest \
+            --tag ${{ steps.image_meta.outputs.frontend }}:${{ github.sha }} \
+            --tag ${{ steps.image_meta.outputs.frontend }}:latest \
             ./client
 
       # ── 9. Build de l'image Docker Backend ───────────────
       - name: Build Docker image backend
         run: |
           docker build \
-            --tag ${{ env.IMAGE_BACKEND }}:${{ github.sha }} \
-            --tag ${{ env.IMAGE_BACKEND }}:latest \
+            --tag ${{ steps.image_meta.outputs.backend }}:${{ github.sha }} \
+            --tag ${{ steps.image_meta.outputs.backend }}:latest \
             ./server
 
   # ══════════════════════════════════════════════════════════
@@ -110,6 +115,13 @@ jobs:
       - name: Checkout du code
         uses: actions/checkout@v4
 
+      - name: Préparer les noms d'images GHCR
+        id: image_meta
+        run: |
+          owner=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+          echo "frontend=${{ env.REGISTRY }}/${owner}/propax-frontend" >> "$GITHUB_OUTPUT"
+          echo "backend=${{ env.REGISTRY }}/${owner}/propax-backend" >> "$GITHUB_OUTPUT"
+
       # ── 2. Authentification sur GitHub Container Registry ─
       - name: Login GHCR
         uses: docker/login-action@v3
@@ -125,8 +137,8 @@ jobs:
           context: ./client
           push: true
           tags: |
-            ${{ env.IMAGE_FRONTEND }}:latest
-            ${{ env.IMAGE_FRONTEND }}:${{ github.sha }}
+            ${{ steps.image_meta.outputs.frontend }}:latest
+            ${{ steps.image_meta.outputs.frontend }}:${{ github.sha }}
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
@@ -138,8 +150,8 @@ jobs:
           context: ./server
           push: true
           tags: |
-            ${{ env.IMAGE_BACKEND }}:latest
-            ${{ env.IMAGE_BACKEND }}:${{ github.sha }}
+            ${{ steps.image_meta.outputs.backend }}:latest
+            ${{ steps.image_meta.outputs.backend }}:${{ github.sha }}
           labels: |
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
@@ -156,7 +168,7 @@ jobs:
           # Déployer l'image Docker du backend sur Scalingo
           scalingo --app ${{ secrets.SCALINGO_APP_NAME }} \
             --token ${{ secrets.SCALINGO_API_TOKEN }} \
-            deploy ${{ env.IMAGE_BACKEND }}:${{ github.sha }}
+            deploy ${{ steps.image_meta.outputs.backend }}:${{ github.sha }}
 
           echo "Déploiement Scalingo Propax ${{ github.sha }} réussi ✓"
 
