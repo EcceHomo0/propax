@@ -143,4 +143,10 @@ CREATE TABLE IF NOT EXISTS gerer (
 ) ENGINE=InnoDB;
 
 -- Données initiales
-INSERT INTO ENTREPRISE_CLIENTE (nom, adresse, activite) VALUES ('GriaCad', 'Saint-Domingue', 'Ressources Humaines');
+INSERT INTO ENTREPRISE_CLIENTE (nom, adresse, activite)
+SELECT 'GriaCad', 'Saint-Domingue', 'Ressources Humaines'
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM ENTREPRISE_CLIENTE
+    WHERE nom = 'GriaCad' AND adresse = 'Saint-Domingue' AND activite = 'Ressources Humaines'
+);

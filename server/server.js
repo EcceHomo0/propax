@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const pool = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -43,8 +44,22 @@ app.get("/api/test", (req, res) => {
   });
 });
 
-// Démarrage du serveur
-app.listen(PORT, () => {
-  console.log(`Serveur démarré sur le port ${PORT}`);
-  console.log(`http://localhost:${PORT}`);
-});
+// Démarrage du serveur après initialisation du schéma SQL.
+async function startServer() {
+  try {
+    await pool.initializeDatabase();
+
+    app.listen(PORT, () => {
+      console.log(`Serveur démarré sur le port ${PORT}`);
+      console.log(`http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error(
+      "Erreur lors de l'initialisation de la base de données:",
+      error,
+    );
+    process.exit(1);
+  }
+}
+
+startServer();

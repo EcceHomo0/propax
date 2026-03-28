@@ -144,38 +144,21 @@ jobs:
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
 
-      # ── 5. Déploiement SSH sur le serveur de production ──
+      # ── 5. Déploiement Backend sur Scalingo ─────────────
       # Prérequis : secrets GitHub configurés dans les paramètres du repo
-      #   - PROD_HOST     : adresse IP ou nom de domaine du serveur
-      #   - PROD_USER     : utilisateur SSH
-      #   - PROD_SSH_KEY  : clé privée SSH (RSA ou ED25519)
-      - name: Déploiement sur le serveur de production
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.PROD_USER }}
-          key: ${{ secrets.PROD_SSH_KEY }}
-          script: |
-            # Se positionner dans le dossier du projet
-            cd /opt/propax
+      #   - SCALINGO_API_TOKEN  : token API Scalingo (Account → API Tokens)
+      #   - SCALINGO_APP_NAME   : nom de l'app Scalingo (ex: propax-backend)
+      - name: Déploiement Backend sur Scalingo
+        run: |
+          # Installer la CLI Scalingo
+          curl -O https://cli-dl.scalingo.com/install && bash install
 
-            # Récupérer le fichier docker-compose à jour
-            git pull origin main
+          # Déployer l'image Docker du backend sur Scalingo
+          scalingo --app ${{ secrets.SCALINGO_APP_NAME }} \
+            --token ${{ secrets.SCALINGO_API_TOKEN }} \
+            deploy ${{ env.IMAGE_BACKEND }}:${{ github.sha }}
 
-            # S'authentifier sur GHCR depuis le serveur
-            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-            # Télécharger les nouvelles images
-            docker pull ${{ env.IMAGE_FRONTEND }}:latest
-            docker pull ${{ env.IMAGE_BACKEND }}:latest
-
-            # Redémarrer les services sans downtime
-            docker compose up -d --no-build
-
-            # Supprimer les anciennes images non utilisées
-            docker image prune -f
-
-            echo "Déploiement Propax ${{ github.sha }} réussi ✓"
+          echo "Déploiement Scalingo Propax ${{ github.sha }} réussi ✓"
 
   # ══════════════════════════════════════════════════════════
   # JOB 3 - Notification (optionnel)
