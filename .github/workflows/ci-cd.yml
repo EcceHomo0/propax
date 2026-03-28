@@ -173,21 +173,22 @@ jobs:
           curl -O https://cli-dl.scalingo.com/install && bash install
 
           # Nettoyer les variables de buildpack/projet qui peuvent casser la détection
-          scalingo --app ${{ secrets.SCALINGO_APP_NAME }} env-unset BUILDPACK_NAME || true
-          scalingo --app ${{ secrets.SCALINGO_APP_NAME }} env-unset PROJECT_DIR || true
+          scalingo --app ${{ secrets.SCALINGO_APP_NAME }} env-unset BUILDPACK_NAME >/dev/null 2>&1 || true
+          scalingo --app ${{ secrets.SCALINGO_APP_NAME }} env-unset PROJECT_DIR >/dev/null 2>&1 || true
 
-          # Préparer une archive de déploiement backend minimale
-          rm -rf scalingo-backend-deploy
-          mkdir -p scalingo-backend-deploy/db scalingo-backend-deploy/middleware scalingo-backend-deploy/routes scalingo-backend-deploy/sql
-          cp server/package.json server/package-lock.json server/server.js server/db.js scalingo-backend-deploy/
-          cp -R server/middleware/. scalingo-backend-deploy/middleware/
-          cp -R server/routes/. scalingo-backend-deploy/routes/
-          cp -R server/sql/. scalingo-backend-deploy/sql/
-          cp db/init.sql scalingo-backend-deploy/db/init.sql
-          printf 'web: npm start\n' > scalingo-backend-deploy/Procfile
+          # Préparer une archive conforme aux attentes de Scalingo:
+          # le code applicatif doit être placé dans un sous-dossier à la racine du tar.gz
+          rm -rf scalingo-archive-root
+          mkdir -p scalingo-archive-root/app/db scalingo-archive-root/app/middleware scalingo-archive-root/app/routes scalingo-archive-root/app/sql
+          cp server/package.json server/package-lock.json server/server.js server/db.js scalingo-archive-root/app/
+          cp -R server/middleware/. scalingo-archive-root/app/middleware/
+          cp -R server/routes/. scalingo-archive-root/app/routes/
+          cp -R server/sql/. scalingo-archive-root/app/sql/
+          cp db/init.sql scalingo-archive-root/app/db/init.sql
+          printf 'web: npm start\n' > scalingo-archive-root/app/Procfile
 
-          test -f scalingo-backend-deploy/package.json
-          tar -czf backend-deploy.tar.gz -C scalingo-backend-deploy package.json package-lock.json server.js db.js middleware routes sql db Procfile
+          test -f scalingo-archive-root/app/package.json
+          tar -czf backend-deploy.tar.gz -C scalingo-archive-root app
           tar -tzf backend-deploy.tar.gz
 
           # Déployer l'archive backend sur Scalingo
