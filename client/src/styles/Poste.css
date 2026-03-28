@@ -1,0 +1,69 @@
+main {
+  background: linear-gradient(#fff700 0%, #e5893d 60%);
+  color: black;
+  border-top: 0.5vh solid white;
+  border-bottom: 0.5vh solid white;
+  button:nth-of-type(1) {
+    background-color: #e5893d;
+    height: 4vh;
+    width: 40vw;
+    border-radius: 10vw;
+    box-shadow: 1vh 2vw 2vw rgba(0, 0, 0, 0.2);
+    display: block;
+    margin-left: 0;
+    margin-right: auto;
+  }
+
+  > div {
+    display: flex;
+    justify-content: space-around;
+    p {
+      font-family: "Russo One";
+      font-size: 2.1vh;
+    }
+    img {
+      height: 5vh;
+    }
+  }
+  section {
+    #informations_essentielles {
+      width: 85vw;
+      margin: 2vh auto;
+      background-color: rgba(255, 255, 255, 0.2);
+      font-family: "Russo One";
+      font-size: 1.5vh;
+      padding: 1vh;
+      border: solid 0.2vh white;
+      border-radius: 1vh;
+    }
+    .encart {
+      width: 85vw;
+      margin: 2vh auto;
+      background-color: rgba(255, 255, 255, 0.2);
+      font-family: "Sanchez";
+      font-size: 1.5vh;
+      padding: 1vh;
+      border: solid 0.2vh white;
+      border-radius: 1vh;
+      h3 {
+        text-align: center;
+        text-decoration: underline;
+        font-family: "Russo One";
+      }
+    }
+  }
+}
+a {
+  text-decoration: none;
+}
+a:nth-of-type(2) button {
+  background-color: red;
+  color: white;
+  font-family: "Russo One";
+  font-size: x-large;
+  height: 5vh;
+  width: 30vw;
+  border-radius: 4vw;
+  display: block;
+  margin: 2vh auto;
+}

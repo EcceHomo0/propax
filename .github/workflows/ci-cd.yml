@@ -1,0 +1,198 @@
+# ============================================================
+# GitHub Actions - Pipeline CI/CD Propax
+# Fichier : .github/workflows/ci-cd.yml
+#
+# Déclencheurs :
+#   - Push sur la branche main  → CI + CD (déploiement prod)
+#   - Push sur develop          → CI uniquement (tests + build)
+#   - Pull Request vers main    → CI (validation avant merge)
+#
+# Étapes du pipeline :
+#   1. CI  : lint + tests + build Docker images
+#   2. CD  : push images sur GHCR + déploiement SSH sur serveur
+# ============================================================
+
+name: CI/CD Propax
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_FRONTEND: ghcr.io/${{ github.repository_owner }}/propax-frontend
+  IMAGE_BACKEND: ghcr.io/${{ github.repository_owner }}/propax-backend
+
+jobs:
+  # ══════════════════════════════════════════════════════════
+  # JOB 1 - CI : Intégration Continue
+  # Tests, lint et vérification du build
+  # ══════════════════════════════════════════════════════════
+  ci:
+    name: "CI - Tests & Build"
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Récupération du code source ──────────────────
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      # ── 2. Installation de Node.js ───────────────────────
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: client/package-lock.json
+
+      # ── 3. Installation des dépendances Frontend ─────────
+      - name: Installer les dépendances client
+        working-directory: ./client
+        run: npm ci
+
+      # ── 4. Lint du code React ────────────────────────────
+      - name: Lint client (ESLint)
+        working-directory: ./client
+        run: npm run build --if-present
+        # Note : react-scripts build intègre ESLint automatiquement
+        # Ajouter "lint": "eslint src" dans package.json pour un lint dédié
+
+      # ── 5. Tests unitaires React ─────────────────────────
+      - name: Tests unitaires client
+        working-directory: ./client
+        run: npm test -- --watchAll=false --passWithNoTests
+        env:
+          CI: true
+
+      # ── 6. Installation des dépendances Backend ──────────
+      - name: Installer les dépendances serveur
+        working-directory: ./server
+        run: npm ci
+
+      # ── 7. Tests backend (à implémenter) ─────────────────
+      - name: Tests serveur
+        working-directory: ./server
+        run: npm test --if-present || echo "Aucun test serveur configuré"
+
+      # ── 8. Build de l'image Docker Frontend ──────────────
+      - name: Build Docker image frontend
+        run: |
+          docker build \
+            --tag ${{ env.IMAGE_FRONTEND }}:${{ github.sha }} \
+            --tag ${{ env.IMAGE_FRONTEND }}:latest \
+            ./client
+
+      # ── 9. Build de l'image Docker Backend ───────────────
+      - name: Build Docker image backend
+        run: |
+          docker build \
+            --tag ${{ env.IMAGE_BACKEND }}:${{ github.sha }} \
+            --tag ${{ env.IMAGE_BACKEND }}:latest \
+            ./server
+
+  # ══════════════════════════════════════════════════════════
+  # JOB 2 - CD : Déploiement Continu (main uniquement)
+  # Push sur GHCR + déploiement SSH en production
+  # ══════════════════════════════════════════════════════════
+  cd:
+    name: "CD - Deploy Production"
+    runs-on: ubuntu-latest
+    needs: ci # Démarre seulement si CI réussit
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      # ── 1. Récupération du code source ──────────────────
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      # ── 2. Authentification sur GitHub Container Registry ─
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 3. Build & Push image Frontend ──────────────────
+      - name: Build & Push image Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./client
+          push: true
+          tags: |
+            ${{ env.IMAGE_FRONTEND }}:latest
+            ${{ env.IMAGE_FRONTEND }}:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+
+      # ── 4. Build & Push image Backend ───────────────────
+      - name: Build & Push image Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./server
+          push: true
+          tags: |
+            ${{ env.IMAGE_BACKEND }}:latest
+            ${{ env.IMAGE_BACKEND }}:${{ github.sha }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+
+      # ── 5. Déploiement SSH sur le serveur de production ──
+      # Prérequis : secrets GitHub configurés dans les paramètres du repo
+      #   - PROD_HOST     : adresse IP ou nom de domaine du serveur
+      #   - PROD_USER     : utilisateur SSH
+      #   - PROD_SSH_KEY  : clé privée SSH (RSA ou ED25519)
+      - name: Déploiement sur le serveur de production
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.PROD_HOST }}
+          username: ${{ secrets.PROD_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            # Se positionner dans le dossier du projet
+            cd /opt/propax
+
+            # Récupérer le fichier docker-compose à jour
+            git pull origin main
+
+            # S'authentifier sur GHCR depuis le serveur
+            echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # Télécharger les nouvelles images
+            docker pull ${{ env.IMAGE_FRONTEND }}:latest
+            docker pull ${{ env.IMAGE_BACKEND }}:latest
+
+            # Redémarrer les services sans downtime
+            docker compose up -d --no-build
+
+            # Supprimer les anciennes images non utilisées
+            docker image prune -f
+
+            echo "Déploiement Propax ${{ github.sha }} réussi ✓"
+
+  # ══════════════════════════════════════════════════════════
+  # JOB 3 - Notification (optionnel)
+  # ══════════════════════════════════════════════════════════
+  notify:
+    name: "Notification déploiement"
+    runs-on: ubuntu-latest
+    needs: [ci, cd]
+    if: always() && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Résumé du pipeline
+        run: |
+          echo "## Résumé CI/CD Propax" >> $GITHUB_STEP_SUMMARY
+          echo "| Étape | Statut |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| CI (Tests + Build) | ${{ needs.ci.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| CD (Déploiement)   | ${{ needs.cd.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit             | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branche            | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY

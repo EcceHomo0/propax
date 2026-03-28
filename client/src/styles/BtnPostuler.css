@@ -1,0 +1,10 @@
+#BtnPostuler {
+  background-color: red;
+  color: white;
+  font-family: "Russo One";
+  font-size: x-large;
+  height: 5vh;
+  border-radius: 4vw;
+  display: block;
+  margin: 2vh auto;
+}

@@ -1,70 +1,112 @@
-# Getting Started with Create React App
+# Propax - Plateforme de gestion des offres d'emploi
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Application fullstack développée avec React et Node.js pour la gestion des offres d'emploi.
 
-## Available Scripts
+## 🏗️ Structure du projet
 
-In the project directory, you can run:
+```
+propax/
+├── package.json          # Scripts globaux du monorepo
+├── client/              # Frontend React
+│   ├── src/
+│   │   ├── components/  # Composants React
+│   │   ├── pages/      # Pages de l'application
+│   │   └── styles/     # Fichiers CSS
+│   └── package.json
+├── server/              # Backend Node.js
+│   ├── routes/         # Routes API
+│   ├── db.js           # Configuration base de données
+│   ├── server.js       # Serveur Express
+│   └── package.json
+└── README.md           # Documentation principale
+```
 
-### `npm start`
+## 🚀 Installation et démarrage
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Installation complète
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+npm run install-all
+```
 
-### `npm test`
+### Démarrage en développement
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+# Lance frontend + backend simultanément
+npm run dev
 
-### `npm run build`
+# Ou séparément :
+npm run client  # Frontend sur http://localhost:3000
+npm run server  # Backend sur http://localhost:5000
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 📋 Prérequis
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Node.js** (version 16+)
+- **MySQL** (base de données)
+- **npm** ou **yarn**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🗄️ Configuration base de données
 
-### `npm run eject`
+1. Installer MySQL
+2. Créer la base de données `propax`
+3. Configurer le fichier `server/.env` :
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```env
+PORT=5000
+NODE_ENV=development
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=votre_mot_de_passe
+DB_NAME=propax
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+4. Créer la table `offre` :
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```sql
+CREATE TABLE offre (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  intitule VARCHAR(255) NOT NULL,
+  type_contrat VARCHAR(100) NOT NULL,
+  duree_contrat VARCHAR(100) NOT NULL,
+  lieu_mission VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🎯 Fonctionnalités
 
-## Learn More
+- ✅ Ajout d'offres d'emploi
+- ✅ Connexion base de données MySQL
+- ✅ API RESTful
+- ✅ Interface React responsive
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🔧 Scripts disponibles
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+| Commande              | Description                     |
+| --------------------- | ------------------------------- |
+| `npm run dev`         | Lance frontend + backend        |
+| `npm run client`      | Lance uniquement le frontend    |
+| `npm run server`      | Lance uniquement le backend     |
+| `npm run build`       | Build de production             |
+| `npm run install-all` | Installe toutes les dépendances |
+| `npm run clean`       | Supprime tous les node_modules  |
+| `npm run reset`       | Clean + install complet         |
 
-### Code Splitting
+## 📡 API Endpoints
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Offres d'emploi
 
-### Analyzing the Bundle Size
+- `GET /api/offers` - Récupérer toutes les offres
+- `POST /api/offers` - Créer une nouvelle offre
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🌐 Accès application
 
-### Making a Progressive Web App
+- **Frontend**: http://localhost:3000
+- **Backend**: http://localhost:5000
+- **API Test**: http://localhost:5000/api/test
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🎓 Contexte
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Projet de formation CDA (Concepteur Développeur d'Applications) - ADRAR

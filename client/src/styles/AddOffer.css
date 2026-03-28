@@ -1,0 +1,161 @@
+/* ── Base (mobile-first) ─────────────────────────────── */
+main {
+  background: linear-gradient(#fff700 0%, #e5893d 60%);
+  color: black;
+  border-top: 0.5vh solid white;
+  border-bottom: 0.5vh solid white;
+  text-align: center;
+  font-family: "Sanchez";
+  padding-bottom: 4vh;
+}
+
+main h1 {
+  font-family: "Russo One";
+  padding-top: 2vh;
+}
+
+/* Conteneur du formulaire */
+.form-grid {
+  width: 90vw;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+}
+
+/* Champ individuel */
+.champ {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.champ h3 {
+  margin-bottom: 0.5vh;
+}
+
+.champ input,
+.champ select,
+.champ textarea {
+  width: 80vw;
+  padding: 1vh 1.5vw;
+  border-radius: 10vw;
+  border: none;
+  font-size: 1.6vh;
+  font-family: "Sanchez";
+  box-sizing: border-box;
+}
+
+.champ textarea {
+  border-radius: 2vw;
+  resize: vertical;
+  text-align: left;
+  padding: 1.5vh;
+}
+
+.champ select {
+  text-align: center;
+}
+
+.champ input::placeholder,
+.champ textarea::placeholder {
+  text-align: center;
+  font-size: 1.6vh;
+  color: #888;
+}
+
+/* Bouton submit */
+.champ-submit {
+  display: flex;
+  justify-content: center;
+  margin-top: 1vh;
+}
+
+.champ-submit button {
+  background-color: red;
+  color: white;
+  font-family: "Russo One";
+  font-size: x-large;
+  height: 6vh;
+  width: 60vw;
+  border-radius: 4vw;
+  border: none;
+  cursor: pointer;
+}
+
+/* Barre de navigation admin (masquée sur mobile) */
+.admin-nav {
+  display: none;
+}
+
+/* ── Desktop (≥ 768px) ───────────────────────────────── */
+@media (min-width: 768px) {
+  .admin-nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #6b1010;
+    padding: 0.8rem 2rem;
+  }
+
+  .admin-nav a {
+    color: white;
+    text-decoration: none;
+    font-family: "Sanchez", serif;
+    font-size: 1rem;
+    letter-spacing: 0.03em;
+  }
+
+  .admin-nav a:hover {
+    text-decoration: underline;
+  }
+
+  .form-grid {
+    width: 100%;
+    max-width: 860px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem 3rem;
+    text-align: left;
+  }
+
+  /* Les champs larges (missions, entreprise) occupent les 2 colonnes */
+  .champ-large {
+    grid-column: 1 / -1;
+  }
+
+  .champ-submit {
+    grid-column: 1 / -1;
+    margin-top: 0.5rem;
+  }
+
+  .champ {
+    align-items: flex-start;
+  }
+
+  .champ input,
+  .champ select,
+  .champ textarea {
+    width: 100%;
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .champ textarea {
+    border-radius: 8px;
+  }
+
+  .champ input::placeholder,
+  .champ textarea::placeholder {
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  .champ-submit button {
+    width: 240px;
+    height: 48px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+  }
+}

@@ -1,39 +1,35 @@
 {
-  "name": "propax",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.1",
-    "@testing-library/user-event": "^13.5.0",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
-  },
+  "name": "propax-monorepo",
+  "version": "1.0.0",
+  "description": "Application Propax - Frontend React + Backend Node.js",
+  "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install",
+    "dev": "concurrently --names \"CLIENT,SERVER\" --prefix-colors \"cyan,yellow\" \"npm run client\" \"npm run server\"",
+    "client": "cd client && npm start",
+    "server": "cd server && npm run dev",
+    "start": "npm run dev",
+    "build": "cd client && npm run build",
+    "test": "cd client && npm test",
+    "clean": "rimraf client/node_modules server/node_modules node_modules",
+    "reset": "npm run clean && npm run install-all"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "keywords": [
+    "react",
+    "nodejs",
+    "express",
+    "mysql",
+    "fullstack"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "prettier": "^3.8.1",
+    "rimraf": "^5.0.5"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "workspaces": [
+    "client",
+    "server"
+  ]
 }

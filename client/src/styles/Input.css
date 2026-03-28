@@ -1,0 +1,14 @@
+input {
+      display: block;
+      width: 85vw;
+      height: 4.4vh;
+      border-radius: 7.3vw;
+      margin: 0 auto;
+      text-align: center;
+      font-size: 2.4vh;
+      font-weight: 500;
+    }
+    input::placeholder {
+      text-align: center;
+      font-size: 2vh;
+    }

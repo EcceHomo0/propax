@@ -1,0 +1,41 @@
+main{
+    background: linear-gradient(#fff700 0%, #e5893d 60%);
+    color: black;
+    border-top: 0.5vh solid white;
+    border-bottom: 0.5vh solid white;
+    text-align:center;
+    h1 {
+      font-family: "Russo One";
+    }
+    a{text-decoration: none;}
+    button:nth-of-type(1){
+      background-color: #e5893d;
+      height:4vh;
+      width:50vw;
+      border-radius: 10vw;
+      box-shadow: 1vh 2vw 2vw rgba(0, 0, 0, 0.2);
+      display: block;
+      margin: 0;
+      }
+   
+    input[type="file"] {
+      width: auto;
+      margin: 1vh auto;
+      border-radius: 0;
+    }
+    textarea{
+      border-radius: 1vw;
+      width: 85vw;
+    }
+    input[type="submit"] {
+          background-color: red;
+          color: white;
+          font-family: "Russo One";
+          font-size: x-large;
+          height:5vh;
+          width: 30vw;
+          border-radius: 4vw;
+          display:block;
+          margin: 2vh auto;
+  }
+  }

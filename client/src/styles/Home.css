@@ -1,0 +1,106 @@
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  z-index: 9999;
+  font-family: "Sanchez";
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* Indicateurs de focus accessibles */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid blue;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Fallback pour navigateurs sans :focus-visible */
+button:focus,
+a:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid blue;
+  outline-offset: 3px;
+}
+
+
+main {
+  background: linear-gradient(#fff700 0%, #e5893d 60%);
+  color: black;
+  border-top: 0.5vh solid white;
+  border-bottom: 0.5vh solid white;
+
+  #banniere {
+    p {
+      font-family: "Russo One";
+      text-align: center;
+      margin: 1.1vh;
+      font-size: 2.2vh;
+    }
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+  #recherche {
+    margin-top: 3vh;
+    margin-left: 7vw;
+    label {
+      display: block;
+      text-align: center;
+      font-family: "Sanchez";
+      font-size: 2.2vh;
+      margin-top: 1em;
+      margin-bottom: 0.5em;
+    }
+    /* input {
+      display: block;
+      width: 85vw;
+      height: 4.4vh;
+      border-radius: 7.3vw;
+    }
+    input::placeholder {
+      text-align: center;
+      font-size: 2vh;
+    } */
+    a {
+      text-decoration: none;
+    }
+    button {
+      color: white;
+      background-color: black;
+      font-family: "Sanchez";
+      font-style: italic;
+      font-size: 2.2vh;
+      display: block;
+      margin: 5vh auto;
+      width: 50vw;
+      height: 5vh;
+      border-radius: 10vw;
+      box-shadow: 1vh 2vw 2vw rgba(0, 0, 0, 0.2);
+    }
+  }
+  #connexion_inscription {
+    display: flex;
+    justify-content: space-around;
+    button {
+      background-color: #fff700;
+      font-family: "Sanchez";
+      font-size: 2.2vh;
+      margin: 2vh;
+      height: 5.5vh;
+      width: 36.4vw;
+      border-radius: 6vw;
+    }
+  }
+}
