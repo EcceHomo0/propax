@@ -172,11 +172,18 @@ jobs:
           # Installer la CLI Scalingo
           curl -O https://cli-dl.scalingo.com/install && bash install
 
-          # Préparer une archive de déploiement ne contenant que le backend
+          # Forcer le buildpack Node.js pour éviter les erreurs de détection en monorepo
+          scalingo --app ${{ secrets.SCALINGO_APP_NAME }} env-set BUILDPACK_NAME=nodejs
+
+          # Préparer une archive de déploiement backend minimale
           rm -rf scalingo-backend-deploy
-          mkdir -p scalingo-backend-deploy/db
-          cp -R server/. scalingo-backend-deploy/
+          mkdir -p scalingo-backend-deploy/db scalingo-backend-deploy/middleware scalingo-backend-deploy/routes scalingo-backend-deploy/sql
+          cp server/package.json server/package-lock.json server/server.js server/db.js scalingo-backend-deploy/
+          cp -R server/middleware/. scalingo-backend-deploy/middleware/
+          cp -R server/routes/. scalingo-backend-deploy/routes/
+          cp -R server/sql/. scalingo-backend-deploy/sql/
           cp db/init.sql scalingo-backend-deploy/db/init.sql
+          printf 'web: npm start\n' > scalingo-backend-deploy/Procfile
           tar -czf backend-deploy.tar.gz -C scalingo-backend-deploy .
 
           # Déployer l'archive backend sur Scalingo
