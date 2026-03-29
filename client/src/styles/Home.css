@@ -29,7 +29,16 @@ a:focus:not(:focus-visible),
 input:focus:not(:focus-visible),
 textarea:focus:not(:focus-visible),
 select:focus:not(:focus-visible) {
-  outline: none;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Firefox fallback for focus rings */
+input:-moz-focusring,
+textarea:-moz-focusring,
+select:-moz-focusring {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 
