@@ -1,0 +1,56 @@
+# ============================================================
+# GitHub Actions - Création automatique de Pull Request
+# Fichier : .github/workflows/auto-pr.yml
+#
+# Déclencheur :
+#   - Push sur la branche develop
+#
+# Comportement :
+#   - Crée automatiquement une Pull Request develop → main
+#   - Si la PR existe déjà, elle est mise à jour (pas de doublon)
+# ============================================================
+
+name: Auto PR develop → main
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-pr:
+    name: "Créer / mettre à jour la PR develop → main"
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Récupération du code source ──────────────────
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      # ── 2. Création automatique de la Pull Request ──────
+      - name: Créer la Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          head: develop
+          title: "🚀 Release : develop → main"
+          body: |
+            ## Résumé
+
+            Cette PR a été créée automatiquement suite à un push sur `develop`.
+
+            ### Avant de merger, vérifier :
+            - [ ] Tous les checks CI sont au vert
+            - [ ] Le build Docker frontend et backend réussit
+            - [ ] Les tests unitaires et E2E passent
+            - [ ] Pas de conflits avec `main`
+
+            ### Déploiement
+            Le merge de cette PR sur `main` déclenchera automatiquement le déploiement en production (job CD).
+          draft: false
+          labels: "auto-pr,release"
