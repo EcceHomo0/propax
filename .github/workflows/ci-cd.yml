@@ -88,7 +88,20 @@ jobs:
         working-directory: ./server
         run: npm test --if-present || echo "Aucun test serveur configuré"
 
-      # ── 8. Build de l'image Docker Frontend ──────────────
+      # ── 8. Tests E2E Cypress ─────────────────────────────
+      - name: Tests E2E Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: ./client
+          start: npm start
+          wait-on: "http://localhost:3000"
+          wait-on-timeout: 60
+          browser: chrome
+        env:
+          CI: true
+          REACT_APP_API_URL: ""
+
+      # ── 9. Build de l'image Docker Frontend ──────────────
       - name: Build Docker image frontend
         run: |
           docker build \
@@ -96,7 +109,7 @@ jobs:
             --tag ${{ steps.image_meta.outputs.frontend }}:latest \
             ./client
 
-      # ── 9. Build de l'image Docker Backend ───────────────
+      # ── 10. Build de l'image Docker Backend ───────────────
       - name: Build Docker image backend
         run: |
           docker build \
