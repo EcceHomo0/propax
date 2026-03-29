@@ -23,14 +23,13 @@ select:focus-visible {
   border-radius: 6px;
 }
 
-/* Fallback pour navigateurs sans :focus-visible */
-button:focus,
-a:focus,
-input:focus,
-textarea:focus,
-select:focus {
-  outline: 3px solid blue;
-  outline-offset: 3px;
+/* Supprime l'outline par défaut pour les clics souris (conservé via :focus-visible pour le clavier) */
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+input:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible),
+select:focus:not(:focus-visible) {
+  outline: none;
 }
 
 
