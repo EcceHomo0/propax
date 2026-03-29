@@ -37,7 +37,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: main
-          head: develop
           title: "🚀 Release : develop → main"
           body: |
             ## Résumé
