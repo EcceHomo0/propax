@@ -41,6 +41,27 @@ select:-moz-focusring {
   box-shadow: none !important;
 }
 
+/* If browser ignores :focus-visible, use JS toggled class */
+.user-is-tabbing button:focus,
+.user-is-tabbing a:focus,
+.user-is-tabbing input:focus,
+.user-is-tabbing textarea:focus,
+.user-is-tabbing select:focus {
+  outline: 3px solid blue;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ensure mouse clicks do not show focus ring */
+button:focus,
+a:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 
 main {
   background: linear-gradient(#fff700 0%, #e5893d 60%);
