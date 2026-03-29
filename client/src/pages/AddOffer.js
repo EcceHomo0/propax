@@ -3,6 +3,7 @@ import Footer from "../components/Footer";
 import BtnPostuler from "../components/BtnPostuler";
 import "../styles/AddOffer.css";
 import { useState, useEffect } from "react";
+import { buildApiUrl } from "../config/api";
 
 const AddOffer = () => {
   const [intitule, setIntitule] = useState("");
@@ -17,7 +18,7 @@ const AddOffer = () => {
   const [entreprises, setEntreprises] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/entreprises")
+    fetch(buildApiUrl("/api/entreprises"))
       .then((res) => res.json())
       .then((data) => setEntreprises(Array.isArray(data) ? data : []))
       .catch(() => setEntreprises([]));
@@ -39,7 +40,7 @@ const AddOffer = () => {
     };
 
     try {
-      const response = await fetch("http://localhost:5000/api/offers", {
+      const response = await fetch(buildApiUrl("/api/offers"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(offre),

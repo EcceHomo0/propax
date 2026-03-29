@@ -107,6 +107,57 @@ CREATE TABLE offre (
 - **Backend**: http://localhost:5000
 - **API Test**: http://localhost:5000/api/test
 
+## Scalingo
+
+### Backend
+
+Le backend est déployé sur une application Scalingo dédiée.
+
+### Frontend
+
+Le frontend React doit être déployé sur une seconde application Scalingo.
+
+Variables à définir sur l'app frontend:
+
+```env
+REACT_APP_API_URL=https://VOTRE-BACKEND.osc-fr1.scalingo.io
+```
+
+Variable à définir sur l'app frontend si le dépôt complet est connecté à Scalingo:
+
+```env
+PROJECT_DIR=client
+```
+
+Variable à définir sur l'app backend pour autoriser le frontend en CORS:
+
+```env
+CLIENT_URL=https://VOTRE-FRONTEND.osc-fr1.scalingo.io
+```
+
+Principe recommandé:
+
+1. créer une app Scalingo dédiée au frontend
+2. déployer uniquement le dossier `client/` sur cette app
+3. builder l'application React sur Scalingo
+4. servir le build statique
+
+Le frontend contient maintenant un `Procfile` dédié:
+
+```text
+web: npx serve -s build -l $PORT
+```
+
+Déploiement recommandé avec une app Scalingo reliée au même dépôt:
+
+1. créer une nouvelle app Scalingo pour le frontend
+2. connecter cette app au dépôt GitHub du projet
+3. définir `PROJECT_DIR=client`
+4. définir `REACT_APP_API_URL=https://...backend...`
+5. relancer un déploiement
+
+Le backend doit autoriser ce domaine frontend via `CLIENT_URL`.
+
 ## 🎓 Contexte
 
 Projet de formation CDA (Concepteur Développeur d'Applications) - ADRAR

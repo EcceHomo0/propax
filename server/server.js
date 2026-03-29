@@ -7,11 +7,21 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
-const allowedOrigin = process.env.CLIENT_URL || "http://localhost:3000";
+const allowedOrigins = (process.env.CLIENT_URL || "http://localhost:3000")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
 
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error("Origine non autorisee par la configuration CORS"));
+    },
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type"],
   }),

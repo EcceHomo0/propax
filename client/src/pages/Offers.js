@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import BtnRetour from "../components/BtnRetour";
 import BtnEnSavoirPlus from "../components/BtnEnSavoirPlus";
+import { buildApiUrl } from "../config/api";
 
 const Offers = () => {
   const [searchParams] = useSearchParams();
@@ -15,7 +16,7 @@ const Offers = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/offers")
+    fetch(buildApiUrl("/api/offers"))
       .then((res) => res.json())
       .then((data) => {
         setToutesLesOffres(Array.isArray(data) ? data : []);
