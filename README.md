@@ -115,7 +115,7 @@ Le backend est déployé sur une application Scalingo dédiée.
 
 ### Frontend
 
-Le frontend React doit être déployé sur une seconde application Scalingo.
+Le frontend React est déployé sur une seconde application Vercel.
 
 Variables à définir sur l'app frontend:
 

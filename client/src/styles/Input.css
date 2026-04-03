@@ -12,3 +12,16 @@ input {
       text-align: center;
       font-size: 2vh;
     }
+
+@media (min-width: 768px) {
+  input {
+    width: 100%;
+    max-width: 400px;
+    height: 40px;
+    border-radius: 20px;
+    font-size: 1rem;
+  }
+  input::placeholder {
+    font-size: 0.95rem;
+  }
+}
