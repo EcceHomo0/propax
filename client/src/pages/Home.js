@@ -23,15 +23,17 @@ const Home = () => {
       <main id="main">
         <section id="banniere" aria-label="Bannière principale">
           <p>Votre talent, notre pièce maîtresse</p>
-          <img
-            src="/images/equipe_puzzle.webp"
-            srcSet="/images/equipe_puzzle-400.webp 400w, /images/equipe_puzzle.webp 800w"
-            sizes="100vw"
-            alt="Équipe collaborant autour d'un puzzle"
-            fetchPriority="high"
-            width="800"
-            height="534"
-          />
+          <figure>
+            <img
+              src="/images/equipe_puzzle.webp"
+              srcSet="/images/equipe_puzzle-400.webp 400w, /images/equipe_puzzle.webp 800w"
+              sizes="100vw"
+              alt="Équipe collaborant autour d'un puzzle"
+              fetchPriority="high"
+              width="800"
+              height="534"
+            />
+          </figure>
         </section>
         <section id="recherche" aria-label="Recherche d'offres">
           <div>

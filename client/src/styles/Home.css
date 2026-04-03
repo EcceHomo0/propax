@@ -90,6 +90,9 @@ main {
       margin: 1.1vh;
       font-size: 2.2vh;
     }
+    figure {
+      margin: 0;
+    }
     img {
       width: 100%;
       height: auto;
