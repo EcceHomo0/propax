@@ -23,7 +23,6 @@ const Home = () => {
       <main id="main">
         <section id="banniere" aria-label="Bannière principale">
           <p>Votre talent, notre pièce maîtresse</p>
-          <figure>
             <img
               src="/images/equipe_puzzle.webp"
               srcSet="/images/equipe_puzzle-400.webp 400w, /images/equipe_puzzle.webp 800w"
@@ -33,7 +32,6 @@ const Home = () => {
               width="800"
               height="534"
             />
-          </figure>
         </section>
         <section id="recherche" aria-label="Recherche d'offres">
           <div>
